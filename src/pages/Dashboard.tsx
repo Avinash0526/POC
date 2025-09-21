@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import DataTable from '../components/DataTable';
 import {
   LineChart,
@@ -10,16 +10,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import MainLayout from '../components/MainLayout';
+import { UserInfoHeader } from './user-info-header/UserInfoHeader';
 
 const Dashboard: React.FC = () => {
-  // Stats
-  const stats = [
-    { label: 'Completed Tasks', value: 27, color: '#4caf50' },
-    { label: 'Tasks Rejected', value: 27, color: '#f44336' },
-    { label: 'Tasks In Progress', value: 27, color: '#ff9800' },
-    { label: 'New Tasks', value: 27, color: '#2196f3' },
-  ];
-
   const columns = [
     { id: 'ESLID', label: 'ESL ID', sortable: true, minWidth: 150 },
     { id: 'Severity', label: 'Severity' },
@@ -30,8 +23,6 @@ const Dashboard: React.FC = () => {
     { id: 'EquipmentType', label: 'Equipment Type' },
     { id: 'Status', label: 'Status' },
     { id: 'ProcessDescription', label: 'Process Description', minWidth: 300 },
-    { id: 'ProcessDescription1', label: 'Process Description1' },
-    { id: 'ProcessDescription2', label: 'Process Description2' },
   ];
 
   const rows = [
@@ -45,9 +36,6 @@ const Dashboard: React.FC = () => {
       EquipmentType: 'Piping',
       Status: 'Inprogress',
       ProcessDescription: 'Product Manifold System',
-      ProcessDescription1: 'Product Manifold System',
-      ProcessDescription2: 'Product Manifold System',
-      ProcessDescription3: 'Product Manifold System',
     },
     {
       ESLID: '107012',
@@ -59,9 +47,6 @@ const Dashboard: React.FC = () => {
       EquipmentType: 'Piping',
       Status: 'Under MSP review',
       ProcessDescription: 'SOUR Water System',
-      ProcessDescription1: 'Product Manifold System',
-      ProcessDescription2: 'Product Manifold System',
-      ProcessDescription3: 'Product Manifold System',
     },
   ];
 
@@ -73,74 +58,50 @@ const Dashboard: React.FC = () => {
     { name: 'Week 4', value: 30 },
   ];
 
-  const StatCard = ({
-    title,
-    value,
-    color,
-  }: {
-    title: string;
-    value: number;
-    color: string;
-  }) => {
-    return (
-      <Card
-        sx={{
-          borderTop: `4px solid ${color}`,
-          boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-          minWidth: 180,
-        }}
-      >
-        <CardContent sx={{ textAlign: 'center', flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body1" sx={{ fontWeight: 500, color: color,}}>
-            {title}
-          </Typography>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: color }}>
-            {value}
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  };
-
+  
   return (
     <MainLayout>
-      <Box sx={{ p: 3 }}>
-        {/* Header */}
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Welcome, Steven
-        </Typography>
+      <Box sx={{ p: 3, paddingTop: '5rem' }}>
+        <UserInfoHeader />
+        <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
+          {/* Data Table */}
+          <DataTable
+            title="Recent ESL Task"
+            columns={columns}
+            rows={rows}
+            showActions={{ view: true }}
+          />
 
-        {/* Stats */}
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          {stats.map((stat, i) => (
-            <Box sx={{ display: 'flex', gap: 2, ml: 5, }} key={i}>
-              <StatCard title={stat.label} value={27} color={stat.color} />
-            </Box>
-          ))}
-        </Grid>
-        <DataTable
-          title="END OF SERVICE LIFE MANAGEMENT"
-          columns={columns}
-          rows={rows}
-          showActions={{view: true, edit: true}}
-        />
-
-        {/* Chart */}
-        <Box sx={{ mt: 4, width: '100%', maxWidth: 800 }}>
-          <Typography variant="h6">Work Report</Typography>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={chartData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#1976d2"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {/* Chart */}
+          <Box
+            sx={{
+              mt: 4,
+              width: '100%',
+              maxWidth: 800,
+              borderRadius: '10px',
+              boxShadow: 3,
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              sx={{ backgroundColor: '#FDF3F3', padding: 1, mb: 2, fontWeight: 600 }}
+            >
+              Work Report
+            </Typography>
+            <ResponsiveContainer width="100%" height={120}>
+              <LineChart  data={chartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#1976d2"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </Box>
         </Box>
       </Box>
     </MainLayout>

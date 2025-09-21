@@ -45,6 +45,8 @@ interface DataTableProps {
   onView?: (row: Row) => void;
   onEdit?: (row: Row) => void;
   onDelete?: (row: Row) => void;
+  isSearchable?: boolean;
+  isPagination?: boolean;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -55,6 +57,8 @@ const DataTable: React.FC<DataTableProps> = ({
   onView,
   onEdit,
   onDelete,
+  isSearchable = false,
+  isPagination = false,
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -112,181 +116,198 @@ const DataTable: React.FC<DataTableProps> = ({
     return 'inherit';
   };
 
- const renderSortIcons = (): JSX.Element => (
-  <Box sx={{ display: "flex", flexDirection: "row", ml: 1 }}>
-    <ArrowsIcon />
-    <SortingOrderIcon />
-  </Box>
-);
+  const renderSortIcons = (): JSX.Element => (
+    <Box sx={{ display: 'flex', flexDirection: 'row', ml: 1 }}>
+      <ArrowsIcon />
+      <SortingOrderIcon />
+    </Box>
+  );
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Paper elevation={0} sx={{ width: '100%', overflow: 'hidden' }}>
       {/* 🔹 Header */}
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        px={2}
+        px={1}
         py={1}
-        borderBottom="1px solid #ddd"
       >
-        <Typography variant="subtitle1" fontWeight="bold">
+        <Typography variant="subtitle2" fontSize='16px' color='#5A5A5A' fontWeight={600}>
           {title}
         </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
-          <TextField
-            size="small"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              endAdornment: <SearchIcon fontSize="small" color="action" />,
-            }}
-          />
-        </Box>
+        {isSearchable ? (
+          <Box display="flex" alignItems="center" gap={1}>
+            <TextField
+              size="small"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                endAdornment: <SearchIcon fontSize="small" color="action" />,
+              }}
+            />
+          </Box>
+        ) : null}
       </Box>
 
       {/* 🔹 Table */}
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align || 'left'}
-                  sx={{
-                    fontWeight: 'bold',
-                    fontSize: '0.85rem',
-                    backgroundColor: '#F9D8D8',
-                    padding: '8px 16px',
-                    minWidth: column.minWidth || 100,
-                    cursor: column.sortable ? 'pointer' : 'default',
-                  }}
-                  sortDirection={orderBy === column.id ? order : false}
-                >
-                  {column.sortable ? (
-                    <TableSortLabel
-                      active={orderBy === column.id}
-                      direction={orderBy === column.id ? order : 'asc'}
-                      onClick={() => handleSort(column.id)}
-                      hideSortIcon={false}
-                      IconComponent={renderSortIcons}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
-                </TableCell>
-              ))}
-              {showActions.view || showActions.edit || showActions.delete ? (
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    fontSize: '0.85rem',
-                    backgroundColor: '#F9D8D8',
-                    textAlign: 'center',
-                    position: 'sticky',
-                    right: 0,
-                    zIndex: 2,
-                  }}
-                >
-                  Actions
-                </TableCell>
-              ) : null}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, i) => (
-                <TableRow key={i} hover>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    if (column.id === 'Severity') {
+      <Box
+        sx={{
+          boxShadow: 3,
+          border: '1px solid #ccc;',
+          borderRadius: '10px;',
+          paddingBottom: '5px',
+        }}
+      >
+        <TableContainer sx={{ maxHeight: 440, borderRadius: '10px;' }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align || 'left'}
+                    sx={{
+                      fontWeight: 'bold',
+                      fontSize: '0.85rem',
+                      backgroundColor: '#FDF3F3',
+                      padding: '8px 16px',
+                      minWidth: column.minWidth || 100,
+                      cursor: column.sortable ? 'pointer' : 'default',
+                      lineHeight: '1',
+                    }}
+                    sortDirection={orderBy === column.id ? order : false}
+                  >
+                    {column.sortable ? (
+                      <TableSortLabel
+                        active={orderBy === column.id}
+                        direction={orderBy === column.id ? order : 'asc'}
+                        onClick={() => handleSort(column.id)}
+                        hideSortIcon={false}
+                        IconComponent={renderSortIcons}
+                      >
+                        {column.label}
+                      </TableSortLabel>
+                    ) : (
+                      column.label
+                    )}
+                  </TableCell>
+                ))}
+                {showActions.view || showActions.edit || showActions.delete ? (
+                  <TableCell
+                    sx={{
+                      fontWeight: 'bold',
+                      fontSize: '0.85rem',
+                      backgroundColor: '#FDF3F3',
+                      textAlign: 'center',
+                      position: 'sticky',
+                      right: 0,
+                      zIndex: 2,
+                      lineHeight: '1',
+                    }}
+                  >
+                    Actions
+                  </TableCell>
+                ) : null}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, i) => (
+                  <TableRow key={i}>
+                    {columns.map((column) => {
+                      const value = row[column.id];
+                      if (column.id === 'Severity') {
+                        return (
+                          <TableCell
+                            key={column.id}
+                            sx={{
+                              color: getSeverityColor(String(value)),
+                              fontWeight: 600,
+                              padding: '8px',
+                              lineHeight: '1 !important',
+                            }}
+                          >
+                            {value}
+                          </TableCell>
+                        );
+                      }
+                      if (column.id === 'Status') {
+                        return (
+                          <TableCell
+                            key={column.id}
+                            sx={{
+                              color: getStatusColor(String(value)),
+                              fontWeight: 600,
+                              padding: '8px',
+                              lineHeight: '1 !important',
+                            }}
+                          >
+                            {value}
+                          </TableCell>
+                        );
+                      }
                       return (
-                        <TableCell
-                          key={column.id}
-                          sx={{
-                            color: getSeverityColor(String(value)),
-                            fontWeight: 600,
-                            padding: '8px',
-                          }}
-                        >
+                        <TableCell key={column.id} sx={{ padding: '8px' }}>
                           {value}
                         </TableCell>
                       );
-                    }
-                    if (column.id === 'Status') {
-                      return (
-                        <TableCell
-                          key={column.id}
-                          sx={{
-                            color: getStatusColor(String(value)),
-                            fontWeight: 600,
-                            padding: '8px',
-                          }}
-                        >
-                          {value}
-                        </TableCell>
-                      );
-                    }
-                    return (
-                      <TableCell key={column.id} sx={{ padding: '8px' }}>
-                        {value}
+                    })}
+
+                    {/* 🔹 Actions */}
+                    {(showActions.view ||
+                      showActions.edit ||
+                      showActions.delete) && (
+                      <TableCell
+                        align="center"
+                        sx={(theme) => ({
+                          position: 'sticky',
+                          right: 0,
+                          zIndex: 2,
+                          padding: '8px',
+                          backgroundColor: theme.palette.background.paper,
+                        })}
+                      >
+                        <Box display="flex" justifyContent="center" gap={1}>
+                          {showActions.view && (
+                            <IconButton onClick={() => onView?.(row)}>
+                              <VisibilityIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                          {showActions.edit && (
+                            <IconButton onClick={() => onEdit?.(row)}>
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                          {showActions.delete && (
+                            <IconButton onClick={() => onDelete?.(row)}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                        </Box>
                       </TableCell>
-                    );
-                  })}
+                    )}
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-                  {/* 🔹 Actions */}
-                  {(showActions.view || showActions.edit || showActions.delete) && (
-                    <TableCell
-                      align="center"
-                      sx={(theme) => ({
-                        position: 'sticky',
-                        right: 0,
-                        zIndex: 2,
-                        padding: '8px',
-                        backgroundColor: theme.palette.background.paper,
-                      })}
-                    >
-                      <Box display="flex" justifyContent="center" gap={1}>
-                        {showActions.view && (
-                          <IconButton onClick={() => onView?.(row)}>
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                        {showActions.edit && (
-                          <IconButton onClick={() => onEdit?.(row)}>
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                        {showActions.delete && (
-                          <IconButton onClick={() => onDelete?.(row)}>
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                      </Box>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* 🔹 Pagination */}
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
-        component="div"
-        count={filteredRows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={{ borderTop: '1px solid #ddd' }}
-      />
+        {/* 🔹 Pagination */}
+        {isPagination && filteredRows.length > rowsPerPage ? (
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          component="div"
+          count={filteredRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ borderTop: '1px solid #ddd' }}
+        />) : null}
+      </Box>
     </Paper>
   );
 };

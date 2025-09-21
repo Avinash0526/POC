@@ -18,7 +18,6 @@ const Layout: React.FC<LayoutProps> = ({ children, hideSidebar }) => {
         sx={{
           flexGrow: 1,
           bgcolor: 'background.default',
-          p: 3,
           width: '75%',
         }}
       >

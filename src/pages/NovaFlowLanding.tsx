@@ -12,7 +12,7 @@ const Landing: React.FC = () => {
         flexDirection={{ xs: 'column', md: 'row' }}
         alignItems="center"
         justifyContent="space-between"
-        minHeight="80vh"
+        height={'100vh'}
         px={4}
       >
         {/* Left Content */}
