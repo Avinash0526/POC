@@ -120,7 +120,7 @@ const DataTable: React.FC<DataTableProps> = ({
 );
 
   return (
-    <Paper sx={{ width: '100%', maxWidth: '90%', overflow: 'hidden' }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       {/* 🔹 Header */}
       <Box
         display="flex"
