@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
   ];
 
   const columns = [
-    { id: 'ESLID', label: 'ESL ID', sortable: true, minWidth: 100 },
+    { id: 'ESLID', label: 'ESL ID', sortable: true, minWidth: 150 },
     { id: 'Severity', label: 'Severity' },
     { id: 'AssignedDate', label: 'Assigned Date' },
     { id: 'BusinessTeam', label: 'Business Team', sortable: true, minWidth: 200 },
@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
     { id: 'Unit', label: 'Unit' },
     { id: 'EquipmentType', label: 'Equipment Type' },
     { id: 'Status', label: 'Status' },
-    { id: 'ProcessDescription', label: 'Process Description' },
+    { id: 'ProcessDescription', label: 'Process Description', minWidth: 300 },
     { id: 'ProcessDescription1', label: 'Process Description1' },
     { id: 'ProcessDescription2', label: 'Process Description2' },
   ];
@@ -73,6 +73,35 @@ const Dashboard: React.FC = () => {
     { name: 'Week 4', value: 30 },
   ];
 
+  const StatCard = ({
+    title,
+    value,
+    color,
+  }: {
+    title: string;
+    value: number;
+    color: string;
+  }) => {
+    return (
+      <Card
+        sx={{
+          borderTop: `4px solid ${color}`,
+          boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+          minWidth: 180,
+        }}
+      >
+        <CardContent sx={{ textAlign: 'center', flexDirection: 'row', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+          <Typography variant="body1" sx={{ fontWeight: 500, color: color,}}>
+            {title}
+          </Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: color }}>
+            {value}
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <MainLayout>
       <Box sx={{ p: 3 }}>
@@ -84,22 +113,16 @@ const Dashboard: React.FC = () => {
         {/* Stats */}
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {stats.map((stat, i) => (
-            <Grid key={i}>
-              <Card sx={{ bgcolor: stat.color, color: '#fff' }}>
-                <CardContent>
-                  <Typography variant="h6">{stat.value}</Typography>
-                  <Typography variant="body2">{stat.label}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+            <Box sx={{ display: 'flex', gap: 2, ml: 5, }} key={i}>
+              <StatCard title={stat.label} value={27} color={stat.color} />
+            </Box>
           ))}
         </Grid>
-
-        
         <DataTable
           title="END OF SERVICE LIFE MANAGEMENT"
           columns={columns}
           rows={rows}
+          showActions={{view: true, edit: true}}
         />
 
         {/* Chart */}
